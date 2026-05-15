@@ -7,10 +7,9 @@ const PREFIX = '$ ';
 const ADMIN_ROLE_ID = '1504782202716553266';
 let botStartTime = Date.now();
 
-// In-memory storage for user notes, warns, and cooldowns
-const userNotes = new Map(); // guildId -> Map(userId -> [{note, author, timestamp}])
-const userWarns = new Map(); // guildId -> Map(userId -> [{reason, author, timestamp}])
-const channelCooldowns = new Map(); // channelId -> { duration: ms, lastMessage: timestamp }
+const userNotes = new Map();
+const userWarns = new Map();
+const channelCooldowns = new Map();
 
 const app = express();
 app.get('/', (req, res) => {
@@ -179,7 +178,6 @@ client.once('ready', async () => {
                 },
             ],
         },
-        // NEW COMMANDS
         {
             name: 'role',
             description: 'add or remove a role from a user',
@@ -365,7 +363,6 @@ client.once('ready', async () => {
     await client.application.commands.set(commands);
 });
 
-// Helper function to check admin role
 function isAdmin(member) {
     return member.roles.cache.has(ADMIN_ROLE_ID);
 }
@@ -415,10 +412,10 @@ client.on('interactionCreate', async (interaction) => {
         const cpuPercent = (os.loadavg()[0] / os.cpus().length * 100).toFixed(1);
 
         await interaction.reply(
-            '**📊 Bot Statistics**\n' +
-            `**Uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
-            `**CPU:** ${cpuPercent}% (system load)\n` +
-            `**RAM:** ${memUsed}MB / ${memTotal}MB (bot) | ${systemRamUsed}GB / ${systemRam}GB (system)`
+            '**bot statistics**\n' +
+            `**uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
+            `**cpu:** ${cpuPercent}% (system load)\n` +
+            `**ram:** ${memUsed}mb / ${memTotal}mb (bot) | ${systemRamUsed}gb / ${systemRam}gb (system)`
         );
     }
 
@@ -441,7 +438,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'ban') {
         if (!interaction.memberPermissions.has('BanMembers')) {
-            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the ban members permission to use this command.', ephemeral: true });
         }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
@@ -458,7 +455,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'unban') {
         if (!interaction.memberPermissions.has('BanMembers')) {
-            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the ban members permission to use this command.', ephemeral: true });
         }
         const userId = interaction.options.getString('user_id', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
@@ -476,7 +473,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'softban') {
         if (!interaction.memberPermissions.has('BanMembers')) {
-            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the ban members permission to use this command.', ephemeral: true });
         }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
@@ -494,7 +491,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'kick') {
         if (!interaction.memberPermissions.has('KickMembers')) {
-            return interaction.reply({ content: 'you need the Kick Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the kick members permission to use this command.', ephemeral: true });
         }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
@@ -511,7 +508,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'mute') {
         if (!interaction.memberPermissions.has('ModerateMembers')) {
-            return interaction.reply({ content: 'you need the Moderate Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the moderate members permission to use this command.', ephemeral: true });
         }
         const user = interaction.options.getUser('user', true);
         const minutes = interaction.options.getInteger('minutes', true);
@@ -530,7 +527,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'unmute') {
         if (!interaction.memberPermissions.has('ModerateMembers')) {
-            return interaction.reply({ content: 'you need the Moderate Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the moderate members permission to use this command.', ephemeral: true });
         }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
@@ -545,11 +542,9 @@ client.on('interactionCreate', async (interaction) => {
         await interaction.reply(`unmuted ${user.tag}. reason: ${reason}`);
     }
 
-    // NEW COMMAND HANDLERS
-
     if (interaction.commandName === 'role') {
         if (!interaction.memberPermissions.has('ManageRoles')) {
-            return interaction.reply({ content: 'you need the Manage Roles permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the manage roles permission to use this command.', ephemeral: true });
         }
         const action = interaction.options.getString('action', true);
         const user = interaction.options.getUser('user', true);
@@ -561,7 +556,6 @@ client.on('interactionCreate', async (interaction) => {
             return interaction.reply({ content: 'user not found in this server.', ephemeral: true });
         }
 
-        // Check role hierarchy
         if (role.position >= interaction.member.roles.highest.position) {
             return interaction.reply({ content: 'cannot modify roles higher than or equal to your highest role.', ephemeral: true });
         }
@@ -583,7 +577,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'purge') {
         if (!interaction.memberPermissions.has('ManageMessages')) {
-            return interaction.reply({ content: 'you need the Manage Messages permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the manage messages permission to use this command.', ephemeral: true });
         }
         const amount = interaction.options.getInteger('amount', true);
         if (amount < 1 || amount > 100) {
@@ -598,17 +592,16 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'cooldown') {
         if (!interaction.memberPermissions.has('ManageChannels')) {
-            return interaction.reply({ content: 'you need the Manage Channels permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the manage channels permission to use this command.', ephemeral: true });
         }
 
         const duration = interaction.options.getInteger('duration');
         const channelId = interaction.channel.id;
 
         if (duration === null || duration === undefined) {
-            // View current cooldown
             const cooldown = channelCooldowns.get(channelId);
             if (!cooldown) {
-                return interaction.reply({ content: `no cooldown set for this channel.`, ephemeral: true });
+                return interaction.reply({ content: 'no cooldown set for this channel.', ephemeral: true });
             }
             const seconds = Math.floor(cooldown.duration / 1000);
             return interaction.reply({ content: `current cooldown: ${seconds} second(s).`, ephemeral: true });
@@ -629,7 +622,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'filter') {
         if (!interaction.memberPermissions.has('ManageMessages')) {
-            return interaction.reply({ content: 'you need the Manage Messages permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the manage messages permission to use this command.', ephemeral: true });
         }
 
         const action = interaction.options.getString('action') || 'view';
@@ -665,24 +658,23 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'announce') {
         if (!interaction.memberPermissions.has('ManageMessages') && !isAdmin(interaction.member)) {
-            return interaction.reply({ content: 'you need the Manage Messages permission or administrator role to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the manage messages permission or administrator role to use this command.', ephemeral: true });
         }
 
         const channel = interaction.options.getChannel('channel', true);
         const message = interaction.options.getString('message', true);
 
-        // Make sure the channel is a text channel
         if (!channel.isTextBased()) {
             return interaction.reply({ content: 'the specified channel is not a text channel.', ephemeral: true });
         }
 
-        await channel.send(`**📢 Announcement**\n\n${message}`);
+        await channel.send(`**announcement**\n\n${message}`);
         await interaction.reply({ content: 'announcement sent.', ephemeral: true });
     }
 
     if (interaction.commandName === 'note') {
         if (!interaction.memberPermissions.has('ModerateMembers')) {
-            return interaction.reply({ content: 'you need the Moderate Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the moderate members permission to use this command.', ephemeral: true });
         }
 
         const user = interaction.options.getUser('user', true);
@@ -700,7 +692,7 @@ client.on('interactionCreate', async (interaction) => {
                 return interaction.reply({ content: `no notes found for ${user.tag}.`, ephemeral: true });
             }
 
-            let noteList = `**Notes for ${user.tag}:**\n`;
+            let noteList = `**notes for ${user.tag}:**\n`;
             notes.forEach((note, index) => {
                 noteList += `${index + 1}. ${note.note} (by ${note.author} on ${new Date(note.timestamp).toLocaleDateString()})\n`;
             });
@@ -733,7 +725,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'tempban') {
         if (!interaction.memberPermissions.has('BanMembers')) {
-            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the ban members permission to use this command.', ephemeral: true });
         }
 
         const user = interaction.options.getUser('user', true);
@@ -750,7 +742,7 @@ client.on('interactionCreate', async (interaction) => {
 
         await member.ban({ reason: `tempban: ${reason}` });
 
-        const unbanTime = duration * 60 * 60 * 1000; // hours to ms
+        const unbanTime = duration * 60 * 60 * 1000;
         setTimeout(async () => {
             try {
                 await interaction.guild.members.unban(user.id, 'tempban expired');
@@ -765,7 +757,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'warn') {
         if (!interaction.memberPermissions.has('ModerateMembers')) {
-            return interaction.reply({ content: 'you need the Moderate Members permission to use this command.', ephemeral: true });
+            return interaction.reply({ content: 'you need the moderate members permission to use this command.', ephemeral: true });
         }
 
         const user = interaction.options.getUser('user', true);
@@ -783,7 +775,7 @@ client.on('interactionCreate', async (interaction) => {
                 return interaction.reply({ content: `no warnings found for ${user.tag}.`, ephemeral: true });
             }
 
-            let warnList = `**Warnings for ${user.tag} (${warns.length}):**\n`;
+            let warnList = `**warnings for ${user.tag} (${warns.length}):**\n`;
             warns.forEach((warn, index) => {
                 warnList += `${index + 1}. ${warn.reason} (by ${warn.author} on ${new Date(warn.timestamp).toLocaleDateString()})\n`;
             });
@@ -813,11 +805,9 @@ client.on('interactionCreate', async (interaction) => {
             const warnCount = guildWarns.get(userId).length;
             await interaction.reply({ content: `warned ${user.tag} (${warnCount} total warnings). reason: ${reason}`, ephemeral: false });
 
-            // Try to DM the user
             try {
-                await user.send(`You have been warned in **${interaction.guild.name}**. Reason: ${reason}`);
+                await user.send(`you have been warned in **${interaction.guild.name}**. reason: ${reason}`);
             } catch (err) {
-                // Could not DM user
             }
         }
 
@@ -840,7 +830,6 @@ client.on('messageCreate', async (message) => {
     const args = message.content.slice(PREFIX.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
-    // Check channel cooldown
     const cooldown = channelCooldowns.get(message.channel.id);
     if (cooldown) {
         const now = Date.now();
@@ -850,13 +839,12 @@ client.on('messageCreate', async (message) => {
             try {
                 await message.delete();
                 await message.channel.send(`${message.author}, you must wait ${remaining} second(s) before sending another message.`).then(m => setTimeout(() => m.delete(), 5000));
-            } catch (err) { /* ignore */ }
+            } catch (err) { }
             return;
         }
         cooldown.lastMessage = now;
     }
 
-    // Check channel filter
     const filter = channelCooldowns.get(`${message.channel.id}_filter`);
     if (filter) {
         try {
@@ -865,10 +853,10 @@ client.on('messageCreate', async (message) => {
                 try {
                     await message.delete();
                     await message.channel.send(`${message.author}, your message contains filtered content.`).then(m => setTimeout(() => m.delete(), 5000));
-                } catch (err) { /* ignore */ }
+                } catch (err) { }
                 return;
             }
-        } catch (e) { /* invalid regex, ignore */ }
+        } catch (e) { }
     }
 
     if (command === 'say') {
@@ -922,7 +910,7 @@ client.on('messageCreate', async (message) => {
             '**shell stats**\n' +
             `**uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
             `**cpu:** ${cpuPercent}%\n` +
-            `**ram:** ${ramUsed}MB / ${ramTotal}MB`
+            `**ram:** ${ramUsed}mb / ${ramTotal}mb`
         );
     }
 
@@ -937,7 +925,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'ban') {
         if (!message.member.permissions.has('BanMembers')) {
-            return message.reply('you need the Ban Members permission to use this command.');
+            return message.reply('you need the ban members permission to use this command.');
         }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** $ ban <@user|id> [reason]');
@@ -949,7 +937,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'unban') {
         if (!message.member.permissions.has('BanMembers')) {
-            return message.reply('you need the Ban Members permission to use this command.');
+            return message.reply('you need the ban members permission to use this command.');
         }
         const userId = args[0];
         if (!userId) return message.reply('**usage:** $ unban <user_id> [reason]');
@@ -966,7 +954,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'softban') {
         if (!message.member.permissions.has('BanMembers')) {
-            return message.reply('you need the Ban Members permission to use this command.');
+            return message.reply('you need the ban members permission to use this command.');
         }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** $ softban <@user|id> [reason]');
@@ -979,7 +967,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'kick') {
         if (!message.member.permissions.has('KickMembers')) {
-            return message.reply('you need the Kick Members permission to use this command.');
+            return message.reply('you need the kick members permission to use this command.');
         }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** $ kick <@user|id> [reason]');
@@ -991,7 +979,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'mute') {
         if (!message.member.permissions.has('ModerateMembers')) {
-            return message.reply('you need the Moderate Members permission to use this command.');
+            return message.reply('you need the moderate members permission to use this command.');
         }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** $ mute <@user|id> <minutes> [reason]');
@@ -1005,7 +993,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'unmute') {
         if (!message.member.permissions.has('ModerateMembers')) {
-            return message.reply('you need the Moderate Members permission to use this command.');
+            return message.reply('you need the moderate members permission to use this command.');
         }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** $ unmute <@user|id> [reason]');
@@ -1015,11 +1003,9 @@ client.on('messageCreate', async (message) => {
         await message.channel.send(`unmuted ${target.user.tag}. reason: ${reason}`);
     }
 
-    // NEW PREFIX COMMAND HANDLERS
-
     if (command === 'role') {
         if (!message.member.permissions.has('ManageRoles')) {
-            return message.reply('you need the Manage Roles permission to use this command.');
+            return message.reply('you need the manage roles permission to use this command.');
         }
 
         if (args.length < 3) {
@@ -1034,7 +1020,6 @@ client.on('messageCreate', async (message) => {
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[1]).catch(() => null);
         if (!target) return message.reply('**usage:** user not found');
 
-        // Get role from mention or ID
         let role;
         if (message.mentions.roles.size > 0) {
             role = message.mentions.roles.first();
@@ -1044,7 +1029,6 @@ client.on('messageCreate', async (message) => {
 
         if (!role) return message.reply('**usage:** role not found');
 
-        // Check role hierarchy
         if (role.position >= message.member.roles.highest.position) {
             return message.reply('cannot modify roles higher than or equal to your highest role.');
         }
@@ -1068,7 +1052,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'purge') {
         if (!message.member.permissions.has('ManageMessages')) {
-            return message.reply('you need the Manage Messages permission to use this command.');
+            return message.reply('you need the manage messages permission to use this command.');
         }
 
         const amount = parseInt(args[0]);
@@ -1082,7 +1066,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'cooldown') {
         if (!message.member.permissions.has('ManageChannels')) {
-            return message.reply('you need the Manage Channels permission to use this command.');
+            return message.reply('you need the manage channels permission to use this command.');
         }
 
         const channelId = message.channel.id;
@@ -1112,7 +1096,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'filter') {
         if (!message.member.permissions.has('ManageMessages')) {
-            return message.reply('you need the Manage Messages permission to use this command.');
+            return message.reply('you need the manage messages permission to use this command.');
         }
 
         const channelId = message.channel.id;
@@ -1149,7 +1133,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'announce') {
         if (!message.member.permissions.has('ManageMessages') && !isAdmin(message.member)) {
-            return message.reply('you need the Manage Messages permission or administrator role to use this command.');
+            return message.reply('you need the manage messages permission or administrator role to use this command.');
         }
 
         if (args.length < 2) {
@@ -1170,13 +1154,13 @@ client.on('messageCreate', async (message) => {
             return message.reply('**usage:** please provide an announcement message');
         }
 
-        await channel.send(`**📢 Announcement**\n\n${announcement}`);
+        await channel.send(`**announcement**\n\n${announcement}`);
         await message.reply('announcement sent.');
     }
 
     if (command === 'note') {
         if (!message.member.permissions.has('ModerateMembers')) {
-            return message.reply('you need the Moderate Members permission to use this command.');
+            return message.reply('you need the moderate members permission to use this command.');
         }
 
         if (args.length < 1) {
@@ -1198,7 +1182,7 @@ client.on('messageCreate', async (message) => {
                 return message.reply(`no notes found for ${target.tag}.`);
             }
 
-            let noteList = `**Notes for ${target.tag}:**\n`;
+            let noteList = `**notes for ${target.tag}:**\n`;
             notes.forEach((note, index) => {
                 noteList += `${index + 1}. ${note.note} (by ${note.author} on ${new Date(note.timestamp).toLocaleDateString()})\n`;
             });
@@ -1232,7 +1216,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'tempban') {
         if (!message.member.permissions.has('BanMembers')) {
-            return message.reply('you need the Ban Members permission to use this command.');
+            return message.reply('you need the ban members permission to use this command.');
         }
 
         if (args.length < 2) {
@@ -1267,7 +1251,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'warn') {
         if (!message.member.permissions.has('ModerateMembers')) {
-            return message.reply('you need the Moderate Members permission to use this command.');
+            return message.reply('you need the moderate members permission to use this command.');
         }
 
         if (args.length < 1) {
@@ -1289,7 +1273,7 @@ client.on('messageCreate', async (message) => {
                 return message.reply(`no warnings found for ${target.tag}.`);
             }
 
-            let warnList = `**Warnings for ${target.tag} (${warns.length}):**\n`;
+            let warnList = `**warnings for ${target.tag} (${warns.length}):**\n`;
             warns.forEach((warn, index) => {
                 warnList += `${index + 1}. ${warn.reason} (by ${warn.author} on ${new Date(warn.timestamp).toLocaleDateString()})\n`;
             });
@@ -1318,12 +1302,11 @@ client.on('messageCreate', async (message) => {
             });
 
             const warnCount = guildWarns.get(userId).length;
-            await message.channel.send(`**⚠️ Warning for ${target.tag}**\nReason: ${reason}\nTotal warnings: ${warnCount}`);
+            await message.channel.send(`**warning for ${target.tag}**\nreason: ${reason}\ntotal warnings: ${warnCount}`);
 
-            // Try to DM the user
             try {
-                await target.send(`You have been warned in **${message.guild.name}**. Reason: ${reason}`);
-            } catch (err) { /* could not DM */ }
+                await target.send(`you have been warned in **${message.guild.name}**. reason: ${reason}`);
+            } catch (err) { }
         }
 
         if (action === 'clear') {
