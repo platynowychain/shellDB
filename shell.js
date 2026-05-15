@@ -404,7 +404,7 @@ client.on('messageCreate', async (message) => {
             '**shell stats**\n' +
             `**latency:** ${latency}ms\n` +
             `**uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
-            `**cpu:** ${cpuPercent}% (system load)\n` +
+            `**cpu:** ${cpuPercent}%\n` +
             `**ram:** ${ramUsed}MB / ${ramTotal}MB`
         );
     }
