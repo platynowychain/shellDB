@@ -2,12 +2,12 @@ require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
 
-const PREFIX = 'sh ';
+const PREFIX = '$ ';
 const ADMIN_ROLE_ID = '1504782202716553266';
 
 const app = express();
 app.get('/', (req, res) => {
-    res.send('Bot is online and active!');
+    res.send('bot is online and active!');
 });
 app.listen(process.env.PORT || 3000, () => {
     console.log(`Web server listening on port ${process.env.PORT || 3000} for uptime pings.`);
@@ -178,7 +178,7 @@ client.on('interactionCreate', async (interaction) => {
 
     if (interaction.commandName === 'help') {
         await interaction.reply(
-            '**prefix:** `sh`\n' +
+            '**prefix:** `$` (with a space after)\n' +
             '**commands:**\n' +
             '`help` - displays help data\n' +
             '`say` - makes the bot say something\n' +
