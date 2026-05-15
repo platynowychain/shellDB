@@ -201,7 +201,6 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'stats') {
-        const latency = Date.now() - interaction.createdTimestamp;
         const uptimeMs = Date.now() - botStartTime;
         const uptimeDays = Math.floor(uptimeMs / (1000 * 60 * 60 * 24));
         const uptimeHours = Math.floor((uptimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -218,7 +217,6 @@ client.on('interactionCreate', async (interaction) => {
 
         await interaction.reply(
             '**📊 Bot Statistics**\n' +
-            `**Latency:** ${latency}ms\n` +
             `**Uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
             `**CPU:** ${cpuPercent}% (system load)\n` +
             `**RAM:** ${ramUsed}MB / ${ramTotal}MB (bot) | ${systemRamUsed}GB / ${systemRam}GB (system)`
@@ -381,11 +379,6 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'stats') {
-        const startTime = Date.now();
-        const msg = await message.channel.send('ping...');
-        const latency = Date.now() - startTime;
-        msg.delete().catch(() => {});
-
         const uptimeMs = Date.now() - botStartTime;
         const uptimeDays = Math.floor(uptimeMs / (1000 * 60 * 60 * 24));
         const uptimeHours = Math.floor((uptimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -402,7 +395,6 @@ client.on('messageCreate', async (message) => {
 
         await message.reply(
             '**shell stats**\n' +
-            `**latency:** ${latency}ms\n` +
             `**uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
             `**cpu:** ${cpuPercent}%\n` +
             `**ram:** ${ramUsed}MB / ${ramTotal}MB`
