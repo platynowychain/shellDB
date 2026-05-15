@@ -401,11 +401,11 @@ client.on('messageCreate', async (message) => {
         const cpuPercent = (os.loadavg()[0] / os.cpus().length * 100).toFixed(1);
 
         await message.reply(
-            '**📊 Bot Statistics**\n' +
-            `**Latency:** ${latency}ms\n` +
-            `**Uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
-            `**CPU:** ${cpuPercent}% (system load)\n` +
-            `**RAM:** ${ramUsed}MB / ${ramTotal}MB (bot) | ${systemRamUsed}GB / ${systemRam}GB (system)`
+            '**shell stats**\n' +
+            `**latency:** ${latency}ms\n` +
+            `**uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
+            `**cpu:** ${cpuPercent}% (system load)\n` +
+            `**ram:** ${ramUsed}MB / ${ramTotal}MB`
         );
     }
 
