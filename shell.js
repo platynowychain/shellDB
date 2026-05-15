@@ -1,9 +1,11 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
+const os = require('os');
 
 const PREFIX = '$ ';
 const ADMIN_ROLE_ID = '1504782202716553266';
+let botStartTime = Date.now();
 
 const app = express();
 app.get('/', (req, res) => {
@@ -37,6 +39,10 @@ client.once('ready', async () => {
         {
             name: 'help',
             description: 'displays help data',
+        },
+        {
+            name: 'stats',
+            description: 'displays bot statistics',
         },
         {
             name: 'say',
@@ -181,6 +187,7 @@ client.on('interactionCreate', async (interaction) => {
             '**prefix:** `$` (with a space after)\n' +
             '**commands:**\n' +
             '`help` - displays help data\n' +
+            '`stats` - displays bot statistics\n' +
             '`say` - makes the bot say something\n' +
             '`ban` - bans a user\n' +
             '`unban` - unbans a user by id\n' +
@@ -190,6 +197,31 @@ client.on('interactionCreate', async (interaction) => {
             '`unmute` - removes timeout\n' +
             '(shell administrator)\n' +
             '`shutdown` - shuts down the bot'
+        );
+    }
+
+    if (interaction.commandName === 'stats') {
+        const latency = Date.now() - interaction.createdTimestamp;
+        const uptimeMs = Date.now() - botStartTime;
+        const uptimeDays = Math.floor(uptimeMs / (1000 * 60 * 60 * 24));
+        const uptimeHours = Math.floor((uptimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const uptimeMinutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+        const uptimeSeconds = Math.floor((uptimeMs % (1000 * 60)) / 1000);
+
+        const memUsage = process.memoryUsage();
+        const ramUsed = (memUsage.heapUsed / 1024 / 1024).toFixed(2);
+        const ramTotal = (memUsage.heapTotal / 1024 / 1024).toFixed(2);
+        const systemRam = (os.totalmem() / 1024 / 1024 / 1024).toFixed(2);
+        const systemRamUsed = ((os.totalmem() - os.freemem()) / 1024 / 1024 / 1024).toFixed(2);
+
+        const cpuPercent = (os.loadavg()[0] / os.cpus().length * 100).toFixed(1);
+
+        await interaction.reply(
+            '**📊 Bot Statistics**\n' +
+            `**Latency:** ${latency}ms\n` +
+            `**Uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
+            `**CPU:** ${cpuPercent}% (system load)\n` +
+            `**RAM:** ${ramUsed}MB / ${ramTotal}MB (bot) | ${systemRamUsed}GB / ${systemRam}GB (system)`
         );
     }
 
@@ -335,6 +367,7 @@ client.on('messageCreate', async (message) => {
             '**prefix:** `$` (with a space after)\n' +
             '**commands:**\n' +
             '`help` - displays help data\n' +
+            '`stats` - displays bot statistics\n' +
             '`say` - makes the bot say something\n' +
             '`ban` - bans a user\n' +
             '`unban` - unbans a user by id\n' +
@@ -344,6 +377,35 @@ client.on('messageCreate', async (message) => {
             '`unmute` - removes timeout\n' +
             '(shell administrator)\n' +
             '`shutdown` - shuts down the bot'
+        );
+    }
+
+    if (command === 'stats') {
+        const startTime = Date.now();
+        const msg = await message.channel.send('ping...');
+        const latency = Date.now() - startTime;
+        msg.delete().catch(() => {});
+
+        const uptimeMs = Date.now() - botStartTime;
+        const uptimeDays = Math.floor(uptimeMs / (1000 * 60 * 60 * 24));
+        const uptimeHours = Math.floor((uptimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const uptimeMinutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+        const uptimeSeconds = Math.floor((uptimeMs % (1000 * 60)) / 1000);
+
+        const memUsage = process.memoryUsage();
+        const ramUsed = (memUsage.heapUsed / 1024 / 1024).toFixed(2);
+        const ramTotal = (memUsage.heapTotal / 1024 / 1024).toFixed(2);
+        const systemRam = (os.totalmem() / 1024 / 1024 / 1024).toFixed(2);
+        const systemRamUsed = ((os.totalmem() - os.freemem()) / 1024 / 1024 / 1024).toFixed(2);
+
+        const cpuPercent = (os.loadavg()[0] / os.cpus().length * 100).toFixed(1);
+
+        await message.reply(
+            '**📊 Bot Statistics**\n' +
+            `**Latency:** ${latency}ms\n` +
+            `**Uptime:** ${uptimeDays}d ${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s\n` +
+            `**CPU:** ${cpuPercent}% (system load)\n` +
+            `**RAM:** ${ramUsed}MB / ${ramTotal}MB (bot) | ${systemRamUsed}GB / ${systemRam}GB (system)`
         );
     }
 
