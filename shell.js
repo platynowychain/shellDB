@@ -241,6 +241,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'ban') {
+        if (!interaction.memberPermissions.has('BanMembers')) {
+            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+        }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
         const member = interaction.guild.members.cache.get(user.id);
@@ -255,6 +258,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'unban') {
+        if (!interaction.memberPermissions.has('BanMembers')) {
+            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+        }
         const userId = interaction.options.getString('user_id', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
         try {
@@ -270,6 +276,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'softban') {
+        if (!interaction.memberPermissions.has('BanMembers')) {
+            return interaction.reply({ content: 'you need the Ban Members permission to use this command.', ephemeral: true });
+        }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
         const member = interaction.guild.members.cache.get(user.id);
@@ -285,6 +294,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'kick') {
+        if (!interaction.memberPermissions.has('KickMembers')) {
+            return interaction.reply({ content: 'you need the Kick Members permission to use this command.', ephemeral: true });
+        }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
         const member = interaction.guild.members.cache.get(user.id);
@@ -299,6 +311,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'mute') {
+        if (!interaction.memberPermissions.has('ModerateMembers')) {
+            return interaction.reply({ content: 'you need the Moderate Members permission to use this command.', ephemeral: true });
+        }
         const user = interaction.options.getUser('user', true);
         const minutes = interaction.options.getInteger('minutes', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
@@ -315,6 +330,9 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName === 'unmute') {
+        if (!interaction.memberPermissions.has('ModerateMembers')) {
+            return interaction.reply({ content: 'you need the Moderate Members permission to use this command.', ephemeral: true });
+        }
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'no reason provided';
         const member = interaction.guild.members.cache.get(user.id);
@@ -393,6 +411,9 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'ban') {
+        if (!message.member.permissions.has('BanMembers')) {
+            return message.reply('you need the Ban Members permission to use this command.');
+        }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** sh ban <@user|id> [reason]');
         const reason = args.slice(1).join(' ') || 'no reason provided';
@@ -402,6 +423,9 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'unban') {
+        if (!message.member.permissions.has('BanMembers')) {
+            return message.reply('you need the Ban Members permission to use this command.');
+        }
         const userId = args[0];
         if (!userId) return message.reply('**usage:** sh unban <user_id> [reason]');
         const reason = args.slice(1).join(' ') || 'no reason provided';
@@ -416,6 +440,9 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'softban') {
+        if (!message.member.permissions.has('BanMembers')) {
+            return message.reply('you need the Ban Members permission to use this command.');
+        }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** sh softban <@user|id> [reason]');
         const reason = args.slice(1).join(' ') || 'no reason provided';
@@ -426,6 +453,9 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'kick') {
+        if (!message.member.permissions.has('KickMembers')) {
+            return message.reply('you need the Kick Members permission to use this command.');
+        }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** sh kick <@user|id> [reason]');
         const reason = args.slice(1).join(' ') || 'no reason provided';
@@ -435,6 +465,9 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'mute') {
+        if (!message.member.permissions.has('ModerateMembers')) {
+            return message.reply('you need the Moderate Members permission to use this command.');
+        }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** sh mute <@user|id> <minutes> [reason]');
         const minutes = parseInt(args[1]);
@@ -446,6 +479,9 @@ client.on('messageCreate', async (message) => {
     }
 
     if (command === 'unmute') {
+        if (!message.member.permissions.has('ModerateMembers')) {
+            return message.reply('you need the Moderate Members permission to use this command.');
+        }
         const target = message.mentions.members.first() || await message.guild.members.fetch(args[0]).catch(() => null);
         if (!target) return message.reply('**usage:** sh unmute <@user|id> [reason]');
         const reason = args.slice(1).join(' ') || 'no reason provided';
