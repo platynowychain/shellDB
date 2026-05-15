@@ -331,7 +331,7 @@ client.on('messageCreate', async (message) => {
 
     if (command === 'help') {
         await message.reply(
-            '**prefix:** `sh`\n' +
+            '**prefix:** `$` (with a space after)\n' +
             '**commands:**\n' +
             '`help` - displays help data\n' +
             '`say` - makes the bot say something\n' +
