@@ -188,7 +188,7 @@ client.on('interactionCreate', async (interaction) => {
             '`kick` - kicks a user\n' +
             '`mute` - timeouts a user\n' +
             '`unmute` - removes timeout\n' +
-            '(shell administrator)'
+            '(shell administrator)\n' +
             '`shutdown` - shuts down the bot'
         );
     }
@@ -342,7 +342,7 @@ client.on('messageCreate', async (message) => {
             '`kick` - kicks a user\n' +
             '`mute` - timeouts a user\n' +
             '`unmute` - removes timeout\n' +
-            '(shell administrator)'
+            '(shell administrator)\n' +
             '`shutdown` - shuts down the bot'
         );
     }
