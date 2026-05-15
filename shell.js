@@ -436,3 +436,12 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(process.env.TOKEN);
+
+process.on('SIGTERM', async () => {
+    console.log('Received SIGTERM signal. Shutting down gracefully...');
+    if (client) {
+        await client.destroy();
+        console.log('Discord client destroyed.');
+    }
+    process.exit(0);
+});
