@@ -237,7 +237,7 @@ client.on('interactionCreate', async (interaction) => {
                 ephemeral: true
             });
         }
-        await interaction.reply('shutting down...');
+        await interaction.reply('hold on...');
         await client.destroy();
         process.exit(0);
     }
@@ -413,7 +413,7 @@ client.on('messageCreate', async (message) => {
         if (!message.member.roles.cache.has(ADMIN_ROLE_ID)) {
             return message.reply('you do not have the shell administrator role.');
         }
-        await message.channel.send('shutting down...');
+        await message.channel.send('hold on...');
         await client.destroy();
         process.exit(0);
     }
