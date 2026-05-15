@@ -182,13 +182,14 @@ client.on('interactionCreate', async (interaction) => {
             '**commands:**\n' +
             '`help` - displays help data\n' +
             '`say` - makes the bot say something\n' +
-            '`shutdown` - shuts down the bot\n' +
             '`ban` - bans a user\n' +
             '`unban` - unbans a user by id\n' +
             '`softban` - bans then unbans to clear messages\n' +
             '`kick` - kicks a user\n' +
             '`mute` - timeouts a user\n' +
-            '`unmute` - removes timeout'
+            '`unmute` - removes timeout\n' +
+            '(shell administrator)'
+            '`shutdown` - shuts down the bot'
         );
     }
 
@@ -335,13 +336,14 @@ client.on('messageCreate', async (message) => {
             '**commands:**\n' +
             '`help` - displays help data\n' +
             '`say` - makes the bot say something\n' +
-            '`shutdown` - shuts down the bot\n' +
             '`ban` - bans a user\n' +
             '`unban` - unbans a user by id\n' +
             '`softban` - bans then unbans to clear messages\n' +
             '`kick` - kicks a user\n' +
             '`mute` - timeouts a user\n' +
-            '`unmute` - removes timeout'
+            '`unmute` - removes timeout\n' +
+            '(shell administrator)'
+            '`shutdown` - shuts down the bot'
         );
     }
 
